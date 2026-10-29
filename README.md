@@ -1,5 +1,5 @@
 # Adobe Reader Debloat Registry Keys
-Debloat Adobe Reader for non-Pro users
+Debloat Adobe Reader for non-Pro users<br><br>
 
 ; Disables upsell prompts that encourage non-Pro users to upgrade to paid Acrobat subscriptions
 HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockDown\bAcroSuppressUpsell	DWORD	1
