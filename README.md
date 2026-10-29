@@ -27,3 +27,26 @@ HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockDown\cIPM
 
 ; Suppresses in-product marketing messages, profile completion prompts, and feedback pop-ups on launch
 HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockDown\cIPM\bShowMsgAtLaunch	DWORD	0
+
+<br><br>
+
+To ensure Pro users can successfully sign in, make sure your deployment does not include the following restrictions (which are commonly bundled in aggressive debloat scripts):
+
+1. Enable Sign-In and Licensing Services
+Ensure these keys are either removed or set to allow authentication:
+
+bUpdater / bEnableAcrobatUpdater (Must not completely disable update/licensing handshakes required for subscription verification).
+
+Sign-in UI / Named User Licensing: Adobe Acrobat Pro relies on Adobe Creative Cloud desktop runtime and browser sign-in handshakes. If you have blocked sign-in dialogs via feature lockdown, users cannot authenticate.
+
+2. Specific Registry Keys to Check
+If Pro users are experiencing login loops or "Sign-in required" errors, verify that these keys are not set to block authentication:
+
+Codefragment
+; Ensure sign-in and profile synchronization are allowed (should be 0 or deleted)
+HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockDown\bDisableSignOut	DWORD	0
+
+; Ensure Adobe ID / Enterprise ID login infrastructure is not locked out
+HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockDown\cIMS\bEnableIMS	DWORD	1
+Summary
+Your current list of 9 keys is safe to use for non-Pro/Standard users because it only strips out UI clutter, marketing, AI assistant panels, and upsell prompts. Pro users will still be able to sign in with your current 9 keys, provided that your environment allows outbound communication to Adobe's activation servers (*.adobe.com) and the Identity Management Service (IMS) is not explicitly disabled via cIMS policies.
