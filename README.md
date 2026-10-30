@@ -30,23 +30,24 @@ HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockDown\cIPM
 
 <br><br>
 
-To ensure Pro users can successfully sign in, make sure your deployment does not include the following restrictions (which are commonly bundled in aggressive debloat scripts):
+Below is the list of essential registry keys and values that must be configured (or explicitly set to allow access) for Pro users to log in successfully:
 
-1. Enable Sign-In and Licensing Services
-Ensure these keys are either removed or set to allow authentication:
+; Enables Adobe's Identity Management Service (IMS) used for Adobe ID / Enterprise ID authentication
+HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockDown\cIMS\bEnableIMS	DWORD	1
 
-bUpdater / bEnableAcrobatUpdater (Must not completely disable update/licensing handshakes required for subscription verification).
-
-Sign-in UI / Named User Licensing: Adobe Acrobat Pro relies on Adobe Creative Cloud desktop runtime and browser sign-in handshakes. If you have blocked sign-in dialogs via feature lockdown, users cannot authenticate.
-
-2. Specific Registry Keys to Check
-If Pro users are experiencing login loops or "Sign-in required" errors, verify that these keys are not set to block authentication:
-
-Codefragment
-; Ensure sign-in and profile synchronization are allowed (should be 0 or deleted)
+; Ensures users are allowed to sign out or switch accounts when managing license sessions
 HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockDown\bDisableSignOut	DWORD	0
 
-; Ensure Adobe ID / Enterprise ID login infrastructure is not locked out
+; Ensures the Adobe Acrobat Update Service and license sync handshakes are permitted to connect
+HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockDown\bUpdater	DWORD	1
+
+; Allows enterprise token and subscription verification web calls
+HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockDown\bToggleSophiaWebInfra	DWORD	1
+
+Important Deployment Notes<br>
+Sophia Web Infrastructure (bToggleSophiaWebInfra): While turning this off (0) is common for debloating Reader, setting it to 1 is often necessary for Pro users because the modern sign-in dialog, web-based authentication flows, and dynamic subscription cloud panels rely on Adobe's Sophia web infrastructure to render correctly.
+
+Network Access: Ensure your firewalls or proxy policies do not block endpoints required for licensing, such as *.adobe.com, ims-na1.adobelogin.com, and Adobe's activation servers.
 HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockDown\cIMS\bEnableIMS	DWORD	1
 Summary
 Your current list of 9 keys is safe to use for non-Pro/Standard users because it only strips out UI clutter, marketing, AI assistant panels, and upsell prompts. Pro users will still be able to sign in with your current 9 keys, provided that your environment allows outbound communication to Adobe's activation servers (*.adobe.com) and the Identity Management Service (IMS) is not explicitly disabled via cIMS policies.
